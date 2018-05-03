@@ -1,3 +1,7 @@
-def replaceN(lines):
-    line = [s.replace('\n','') for s in lines]
-    return line
+import pafy
+
+def urlToTitle(my_url):
+    audio = pafy.new(my_url)
+    return audio.title
+
+

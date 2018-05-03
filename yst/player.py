@@ -1,16 +1,10 @@
 import subprocess
-import fileop
-import util
+import jsonop
 
 def start():
-    fl = open('link_queue.txt', 'r')
-    fn = open('s_name.txt', 'r')
-    linesl_n = fl.readlines()
-    linesn_n = fn.readlines()
-    linesl = util.replaceN(linesl_n)
-    linesn = util.replaceN(linesn_n)
-    for linel, linen in zip(linesl, linesn):
-        print('[%s]' %(linen))
-        ex_command = "mpv '"+linel+"' --no-video"
+    json_data = jsonop.load()
+    for key, value in json_data.items():
+        print('[%s]' %(value))
+        ex_command = "mpv '"+key+"' --no-video"
         subprocess.call([ex_command], shell=True)
 
