@@ -8,9 +8,17 @@ import search
 def parseArgs(args):
     parse_dict = vars(args)
     if parse_dict['add'] != None:
-        w_input = '+'.join( parse_dict['add'])
-        my_url = search.generateUrl(w_input)
-        fileop.addLink(my_url)
+        str_input = ' '.join(parse_dict['add'])
+        splitted_input = str_input.split('/')
+        for item in splitted_input:
+            w_input = item.replace(' ','+')
+            my_url = search.singleUrl(w_input)
+            fileop.addLink(my_url)
+    elif parse_dict['search'] != None:
+        str_input = '+'.join(parse_dict['search'])
+        url_list = search.multiUrl(str_input)
+        for item in url_list:
+            fileop.addLink(item)
     elif parse_dict['remove_last'] == True:
         fileop.clearDict()
     elif parse_dict['play'] == True:
@@ -26,6 +34,8 @@ def main():
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-a', '--add', type=str, nargs='*',
                         help='Add url to queue')
+    parser.add_argument('-s', '--search', type=str, nargs='*',
+                        help='Search for a song')
     parser.add_argument('-rl', '--remove-last', action='store_true', default=False, 
                         help='Remove last song from list')
     parser.add_argument('-p', '--play', action='store_true', default=False,

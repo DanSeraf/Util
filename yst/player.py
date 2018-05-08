@@ -1,8 +1,8 @@
 import subprocess
-import jsonop
+import fileop
 
 def start():
-    json_data = jsonop.load()
+    json_data = fileop.loadJson()
     for key, value in json_data.items():
         print('[%s]' %(value))
         ex_command = "mpv '"+key+"' --no-video"
