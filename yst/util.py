@@ -12,3 +12,7 @@ def removeDuplicates(search_res):
             output.append(item)
             seen.add(item)
     return output
+
+def urlToTime(my_url):
+    audio = pafy.new(my_url)
+    return audio.duration

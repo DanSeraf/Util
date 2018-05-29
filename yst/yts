@@ -19,27 +19,32 @@ def parseArgs(args):
         url_list = search.multiUrl(str_input)
         for item in url_list:
             fileop.addLink(item)
-    elif parse_dict['remove_last'] == True:
-        fileop.clearDict()
+    elif parse_dict['remove'] != 0:
+        sel_num = parse_dict['remove']
+        fileop.removeSelected(sel_num)
     elif parse_dict['play'] == True:
         player.start()
+    elif parse_dict['remove_last'] == True:
+        fileop.removeLast()
     elif parse_dict['clear'] == True:
-        fileop.clearDict()
+        fileop.removeDict()
     elif parse_dict['view'] == True:
         fileop.dataViewer()
     else:
         print('[WARN] Error with parse')
 
 def main():
-    parser = argparse.ArgumentParser(description='')
+    parser = argparse.ArgumentParser(description='Simple script to stream audio from youtube')
     parser.add_argument('-a', '--add', type=str, nargs='*',
                         help='Add url to queue')
     parser.add_argument('-s', '--search', type=str, nargs='*',
                         help='Search for a song')
-    parser.add_argument('-rl', '--remove-last', action='store_true', default=False, 
-                        help='Remove last song from list')
+    parser.add_argument('-r', '--remove', type=int, default=0,
+                        help='Remove selected song')
     parser.add_argument('-p', '--play', action='store_true', default=False,
                         help='Play songs in queue')
+    parser.add_argument('-rl', '--remove-last', action='store_true', default=False, 
+                        help='Remove last song from list')
     parser.add_argument('-c', '--clear', action='store_true', default=False,
                         help='Clear queue')
     parser.add_argument('-v', '--view', action='store_true', default=False,

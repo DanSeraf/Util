@@ -25,7 +25,8 @@ def multiUrl(w_input):
     for i in range(0,11):
         url = query + search_res[i]
         title = util.urlToTitle(url)
-        print('[%s] --> %s' %(i, title))
+        duration = util.urlToTime(url)
+        print('[%s] --> %s [%s]' %(i, title, duration))
         list_res[i] = url
     url_selected = input('[*] Enter numbers of songs you want to add: ')
     sus = url_selected.split('-')
