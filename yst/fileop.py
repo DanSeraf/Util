@@ -4,7 +4,7 @@ import os
 import io
 
 def dumpJson(json_data):
-    with open('data.json', 'w') as outfile:
+    with open('data.json', 'w+') as outfile:
         json.dump(json_data, outfile)
 
 def loadJson():
