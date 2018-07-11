@@ -24,8 +24,6 @@ def parseArgs(args):
         fileop.removeSelected(sel_num)
     elif parse_dict['play'] == True:
         player.start()
-    elif parse_dict['remove_last'] == True:
-        fileop.removeLast()
     elif parse_dict['clear'] == True:
         fileop.removeDict()
     elif parse_dict['view'] == True:

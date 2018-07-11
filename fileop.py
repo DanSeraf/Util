@@ -25,18 +25,6 @@ def removeDict():
     dumpJson(json_data)
     print('[*] Data correctly cleared')
 
-def removeLast():
-    json_data = loadJson()
-    updated_json = {}
-    mass = len(json_data) - 1
-    count = 0
-    for key, value in json_data.items():
-        if count < mass:
-            updated_json[key] = value
-        count += 1
-    print('[*] Last song deleted')
-    dumpJson(updated_json)
-
 def removeSelected(num_sel):
     json_data = loadJson()
     updated_json = {}
