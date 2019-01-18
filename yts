@@ -48,6 +48,7 @@ def main():
     parser.add_argument('-v', '--view', action='store_true', default=False,
                         help='View song in queue')
     args = parser.parse_args()
+    fileop.jsonCheck()
     parseArgs(args) 
 
 if __name__ == '__main__':
