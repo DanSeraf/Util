@@ -1,8 +1,7 @@
 import pafy
-
-def urlToTitle(my_url):
-    audio = pafy.new(my_url)
-    return audio.title
+import lxml
+from lxml import etree
+import urllib
 
 def removeDuplicates(search_res):
     output = []
@@ -12,6 +11,11 @@ def removeDuplicates(search_res):
             output.append(item)
             seen.add(item)
     return output
+
+def urlToTitle(url):
+   yt = etree.HTML(urllib.request.urlopen(url).read())
+   title = yt.xpath("//span[@id='eow-title']/@title")
+   return ''.join(title)
 
 def urlToTime(my_url):
     audio = pafy.new(my_url)
