@@ -41,16 +41,15 @@ def parseArgs(args):
             fileop.addLink(my_url)
     elif GLOBAL_CONFIG['search'] != None:
         str_input = '+'.join(GLOBAL_CONFIG['search'])
-        url_list = search.multiUrl(str_input)
-        for item in url_list:
-            fileop.addLink(item)
+        songs_dict = search.multiUrl(str_input)
+        fileop.saveToJson(songs_dict)
     elif GLOBAL_CONFIG['remove'] != 0:
         sel_num = GLOBAL_CONFIG['remove']
         fileop.removeSelected(sel_num)
     elif GLOBAL_CONFIG['play'] == True:
         player.start()
     elif GLOBAL_CONFIG['clear'] == True:
-        fileop.removeDict()
+        fileop.clearAll()
     elif GLOBAL_CONFIG['list'] == True:
         fileop.listData()
     else:

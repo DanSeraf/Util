@@ -18,14 +18,24 @@ def loadJson():
         json_data = json.load(data_file)
         return json_data
 
-def addLink(my_url):
-    title = util.urlToTitle(my_url)
-    json_data = loadJson()
-    json_data[my_url] = title
-    print('[*] (%s) correctly added' %(title))
-    dumpJson(json_data)
+def saveToJson(songs):
+    curr_json = loadJson()
     
-def removeDict():
+    if bool(curr_json) is False:
+        _id = 0
+        for song_dict in songs:
+            _id = _id+1
+            curr_json[str(_id)] = song_dict
+        dumpJson(curr_json)
+    else:
+        curr_id = sorted(curr_json.keys())[-1]
+        for song_dict in songs:
+            curr_id = int(curr_id) + 1
+            curr_json[str(curr_id)] = song_dict
+                
+        dumpJson(curr_json)
+    
+def clearAll():
     json_data = loadJson()
     json_data.clear()
     dumpJson(json_data)

@@ -2,8 +2,8 @@ import subprocess
 import fileop
 
 def start():
-    json_data = fileop.loadJson()
-    for key, value in json_data.items():
-        print('[%s]\n---' %(value))
-        ex_command = "mpv '"+key+"' --no-video"
+    songs = fileop.loadJson()
+    for key, value in songs.items():
+        print('[%s]\n---' %(value['title']))
+        ex_command = "mpv '"+value['url']+"' --no-video"
         subprocess.call([ex_command], shell=True)

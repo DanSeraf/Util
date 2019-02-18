@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#TODO add from url
 
 from config import initConfig, getConfig
 from fileop import jsonCheck

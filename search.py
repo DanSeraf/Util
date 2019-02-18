@@ -15,10 +15,14 @@ def generateIds(query_str):
     return removeDuplicated(search_results)
 
 def singleUrl(query_str):
-    search_res = generateIds(query_str)
-    url = query + search_res[0]
+    uid_list = generateIds(query_str)
+    url = query + uid_list[0]
     return url
 
+def parseConsole(cin):
+        
+    return out
+        
 def multiUrl(query_str):
     output = list()
     try:
@@ -27,10 +31,10 @@ def multiUrl(query_str):
         for key, song in urls.items():
             print("[%s] -> %s [%s]" %(key, song['title'], song['time']))
 
-        uin = input('[*] Enter numbers of songs you want to add: ')
-        udata = uin.split('-')
-        for n in udata:
-            output.append(urls[int(n)]['url'])
+        cin = input('>> ')
+        user_opt = parseConsole(cin)
+        for n in user_opt:
+            output.append(urls[int(n)])
 
     except KeyboardInterrupt:
         pass
@@ -45,9 +49,9 @@ def urlsExtractor(uid_list, workers = 8):
     with fut.ThreadPoolExecutor(workers) as executor:
         urls = {}
         results = [executor.submit(getSong, x) for x in uid_list]
-        i = 0
+        _id = 0
         for res in fut.as_completed(results):
-            i = i+1
-            urls[i] = res.result()
+            _id = _id+1
+            urls[_id] = res.result()
 
         return urls
