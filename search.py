@@ -1,18 +1,27 @@
 import urllib.request
 import urllib.parse
 import re
+import pafy
 import concurrent.futures as fut
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
-from util import removeDuplicated, urlToTitle, urlToTime
 
 query = 'http://www.youtube.com/watch?v='
 
 def generateIds(query_str):
     query_string = urllib.parse.urlencode({"search_query" : query_str})
     html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
-    search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
-    return removeDuplicated(search_results)
+    ids_list = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
+    return removeDuplicated(ids_list)
+
+def removeDuplicated(ids_list):
+    output = list()
+    seen = set()
+    for item in ids_list:
+        if item not in seen:
+            output.append(item)
+            seen.add(item)
+
+    return output
 
 def singleUrl(query_str):
     uid_list = generateIds(query_str)
@@ -20,7 +29,17 @@ def singleUrl(query_str):
     return url
 
 def parseConsole(cin):
-        
+    out = list()
+    if '-' in cin:
+        pos = cin.index('-')
+        for uin in range(int(cin[pos-1]), (int(cin[pos+1])+1)):
+            out.append(uin)
+    else:
+        for n in cin:
+            if n == ' ':
+                continue
+            else:
+                out.append(n)
     return out
         
 def multiUrl(query_str):
@@ -44,7 +63,8 @@ def multiUrl(query_str):
 def urlsExtractor(uid_list, workers = 8):
     def getSong(uid):
         url = query + uid
-        return {'url': url, 'title': urlToTitle(url), 'time': urlToTime(url)}
+        title, time = getUrlData(url)
+        return {'url': url, 'title': title, 'time': time}
 
     with fut.ThreadPoolExecutor(workers) as executor:
         urls = {}
@@ -55,3 +75,8 @@ def urlsExtractor(uid_list, workers = 8):
             urls[_id] = res.result()
 
         return urls
+
+def getUrlData(url):
+    audio = pafy.new(url)
+    return audio.title, audio.duration
+
