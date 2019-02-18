@@ -3,7 +3,7 @@ import lxml
 from lxml import etree
 import urllib
 
-def removeDuplicates(search_res):
+def removeDuplicated(search_res):
     output = []
     seen = set()
     for item in search_res:

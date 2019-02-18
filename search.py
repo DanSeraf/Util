@@ -1,10 +1,10 @@
 import urllib.request
 import urllib.parse
 import re
-import lxml 
-from lxml import etree
+import concurrent.futures as fut
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import util
+from util import removeDuplicated, urlToTitle, urlToTime
 
 query = 'http://www.youtube.com/watch?v='
 
@@ -12,7 +12,7 @@ def generateUrl(query_str):
     query_string = urllib.parse.urlencode({"search_query" : query_str})
     html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
     search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
-    return search_results
+    return removeDuplicated(search_results)
 
 def singleUrl(query_str):
     search_res = generateUrl(query_str)
@@ -20,25 +20,37 @@ def singleUrl(query_str):
     return url
 
 def multiUrl(query_str):
+    output = list
     try:
-        search_res = generateUrl(query_str)
-        search_res = util.removeDuplicates(search_res)
-        output = []
-        list_res = {}
-        for i in range(0,10):
-            url = query + search_res[i]
-            title = util.urlToTitle(url)
-            print('[%s] -> %s' %(i, title))
-            list_res[i] = url
-
-        url_selected = input('[*] Enter numbers of songs you want to add: ')
-        sus = url_selected.split('-')
-        for item in sus:
-            if (int(item) <= 10):
-                output.append(list_res[int(item)])
+        uid_list = generateUrl(query_str)
+        urls = urlsExtractor(uid_list)
+        for key, url in urls.items():
+            print("[%s] - %s" %(key, url))
+            
+        uin = input('[*] Enter numbers of songs you want to add: ')
+        udata = uin.split('-')
+        for n in udata:
+            if (int(n) <= 10):
+                output.append(urls[int(n)])
             else:
-                print('[WARN] Error with input number')
+                print('Error with input number')
+
     except KeyboardInterrupt:
         pass
 
     return output 
+
+def urlsExtractor(uid_list, workers = 8):
+    def getTitle(uid):
+        url = query + uid
+        return urlToTitle(url) 
+
+    with fut.ThreadPoolExecutor(workers) as executor:
+        urls = {}
+        results = [executor.submit(getTitle, x) for x in uid_list]
+        i = 0
+        for res in fut.as_completed(results):
+            i = i+1
+            urls[i] = res.result()
+
+        return urls
