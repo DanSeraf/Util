@@ -42,7 +42,6 @@ def clearAll():
     curr_json = loadJson()
     curr_json.clear()
     dumpJson(curr_json)
-    print('[*] Data correctly cleared')
 
 def removeSelected(ranges):
     def order(curr_json):
