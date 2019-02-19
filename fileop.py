@@ -1,6 +1,8 @@
 import json
 import os
 
+from util import parseInput
+
 def jsonCheck():
     try:
         js = open('data.json', 'r')
@@ -17,6 +19,8 @@ def loadJson():
         json_data = json.load(data_file)
         return json_data
 
+# get every song (list of dicts)
+# save song with id
 def saveToJson(songs):
     curr_json = loadJson()
     
@@ -35,26 +39,28 @@ def saveToJson(songs):
         dumpJson(curr_json)
     
 def clearAll():
-    json_data = loadJson()
-    json_data.clear()
-    dumpJson(json_data)
+    curr_json = loadJson()
+    curr_json.clear()
+    dumpJson(curr_json)
     print('[*] Data correctly cleared')
 
-def removeSelected(num_sel):
-    json_data = loadJson()
-    updated_json = {}
-    i = 0
-    for key, value in json_data.items():
-        i += 1
-        if i != num_sel:
-            updated_json[key] = value
-        else:
-            print('[%s] - Deleted' %(value))
-    dumpJson(updated_json)
+def removeSelected(ranges):
+    def order(curr_json):
+        _id = 0
+        new = dict()
+        for _, song_dict in curr_json.items():
+            _id += 1
+            new[str(_id)] = song_dict
+        return new
+
+    curr_json = loadJson()
+    to_remove = parseInput(' '.join(ranges))
+    for n in to_remove:
+        del curr_json[n]
+    curr_json = order(curr_json)
+    dumpJson(curr_json)
 
 def listData():
-    json_data = loadJson()
-    i = 0
-    for key, value in json_data.items():
-        i += 1
-        print('[%d] - %s' %(i, value))
+    curr_json = loadJson()
+    for _id, song in curr_json.items():
+        print('%s - [%s] %s' %(_id, song['time'], song['title']))

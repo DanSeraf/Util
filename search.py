@@ -5,6 +5,8 @@ import pafy
 import concurrent.futures as fut
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from util import parseInput
+
 query = 'http://www.youtube.com/watch?v='
 
 def generateIds(query_str):
@@ -27,20 +29,6 @@ def singleUrl(query_str):
     uid_list = generateIds(query_str)
     url = query + uid_list[0]
     return url
-
-def parseConsole(cin):
-    out = list()
-    if '-' in cin:
-        pos = cin.index('-')
-        for uin in range(int(cin[pos-1]), (int(cin[pos+1])+1)):
-            out.append(uin)
-    else:
-        for n in cin:
-            if n == ' ':
-                continue
-            else:
-                out.append(n)
-    return out
         
 def multiUrl(query_str):
     output = list()
@@ -51,7 +39,7 @@ def multiUrl(query_str):
             print("[%s] -> %s [%s]" %(key, song['title'], song['time']))
 
         cin = input('>> ')
-        user_opt = parseConsole(cin)
+        user_opt = parseInput(cin)
         for n in user_opt:
             output.append(urls[int(n)])
 
@@ -79,4 +67,3 @@ def urlsExtractor(uid_list, workers = 8):
 def getUrlData(url):
     audio = pafy.new(url)
     return audio.title, audio.duration
-

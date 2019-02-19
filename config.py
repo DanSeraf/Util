@@ -15,12 +15,10 @@ def initConfig():
                         help='Add url to queue')
     parser.add_argument('-s', '--search', type=str, nargs='*',
                         help='Search for a song')
-    parser.add_argument('-r', '--remove', type=int, default=0,
+    parser.add_argument('-r', '--remove', type=str, nargs='*',
                         help='Remove selected song')
-    parser.add_argument('-p', '--play', action='store_true', default=False,
+    parser.add_argument('-p', '--play', nargs='?', const=1, type=int,
                         help='Play songs in queue')
-    parser.add_argument('-rl', '--remove-last', action='store_true', default=False, 
-                        help='Remove last song from list')
     parser.add_argument('-c', '--clear', action='store_true', default=False,
                         help='Clear queue')
     parser.add_argument('-l', '--list', action='store_true', default=False,
@@ -43,11 +41,10 @@ def parseArgs(args):
         str_input = '+'.join(GLOBAL_CONFIG['search'])
         songs_dict = search.multiUrl(str_input)
         fileop.saveToJson(songs_dict)
-    elif GLOBAL_CONFIG['remove'] != 0:
-        sel_num = GLOBAL_CONFIG['remove']
-        fileop.removeSelected(sel_num)
-    elif GLOBAL_CONFIG['play'] == True:
-        player.start()
+    elif GLOBAL_CONFIG['remove'] != None:
+        fileop.removeSelected(GLOBAL_CONFIG['remove'])
+    elif GLOBAL_CONFIG['play'] != None:
+        player.start(GLOBAL_CONFIG['play'])
     elif GLOBAL_CONFIG['clear'] == True:
         fileop.clearAll()
     elif GLOBAL_CONFIG['list'] == True:
