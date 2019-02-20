@@ -43,6 +43,11 @@ def clearAll():
     curr_json.clear()
     dumpJson(curr_json)
 
+def saveUrl(song_dict):
+    curr_json = loadJson()
+    curr_json[str(int(sorted(curr_json.keys())[-1])+1)] = song_dict
+    dumpJson(curr_json)
+
 def removeSelected(ranges):
     def order(curr_json):
         _id = 0

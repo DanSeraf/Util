@@ -25,18 +25,17 @@ def removeDuplicated(ids_list):
 
     return output
 
-def singleUrl(query_str):
-    uid_list = generateIds(query_str)
-    url = query + uid_list[0]
-    return url
+def singleSongInfo(url):
+    title, time = getUrlData(url)
+    return { 'url': url, 'title': title, 'time': time } 
         
-def multiUrl(query_str):
+def multiSongInfo(query_str):
     output = list()
     try:
         uid_list = generateIds(query_str)
         urls = urlsExtractor(uid_list)
         for key, song in urls.items():
-            print("[%s] -> %s [%s]" %(key, song['title'], song['time']))
+            print("%s [%s] > %s" %(key, song['time'], song['title']))
 
         cin = input('>> ')
         user_opt = parseInput(cin)
@@ -65,5 +64,6 @@ def urlsExtractor(uid_list, workers = 8):
         return urls
 
 def getUrlData(url):
+    print(url)
     audio = pafy.new(url)
     return audio.title, audio.duration

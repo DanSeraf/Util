@@ -11,7 +11,7 @@ def getConfig():
 
 def initConfig():
     parser = argparse.ArgumentParser(description='Simple script to stream audio from youtube')
-    parser.add_argument('-a', '--add', type=str, nargs='*',
+    parser.add_argument('-a', '--add', type=str,
                         help='Add url to queue')
     parser.add_argument('-s', '--search', type=str, nargs='*',
                         help='Search for a song')
@@ -29,26 +29,28 @@ def initConfig():
 def parseArgs(args):
     global GLOBAL_CONFIG
     GLOBAL_CONFIG = vars(args)
-    
+
     if GLOBAL_CONFIG['add'] != None:
-        str_input = ' '.join(GLOBAL_CONFIG['add'])
-        splitted_input = str_input.split('/')
-        for item in splitted_input:
-            w_input = item.replace(' ','+')
-            my_url = search.singleUrl(w_input)
-            fileop.addLink(my_url)
+        song_dict = search.singleSongInfo(GLOBAL_CONFIG['add'])
+        fileop.saveUrl(song_dict)
+
     elif GLOBAL_CONFIG['search'] != None:
         str_input = '+'.join(GLOBAL_CONFIG['search'])
-        songs_dict = search.multiUrl(str_input)
+        songs_dict = search.multiSongInfo(str_input)
         fileop.saveToJson(songs_dict)
-    elif GLOBAL_CONFIG['remove'] != None:
+
+    elif GLOBAL_CONFIG['remove'] != None :
         fileop.removeSelected(GLOBAL_CONFIG['remove'])
+
     elif GLOBAL_CONFIG['play'] != None:
         player.start(GLOBAL_CONFIG['play'])
+
     elif GLOBAL_CONFIG['clear'] == True:
         fileop.clearAll()
+
     elif GLOBAL_CONFIG['list'] == True:
         fileop.listData()
+    
     else:
         printUsage()
 

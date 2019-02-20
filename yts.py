@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#TODO add from url
+#TODO add from url, player range 
 
 from config import initConfig, getConfig
 from fileop import jsonCheck
