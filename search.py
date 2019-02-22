@@ -1,19 +1,24 @@
-import urllib.request
-import urllib.parse
-import re
 import pafy
 import concurrent.futures as fut
+from bs4 import BeautifulSoup as Soup
+import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from util import parseInput
 
-query = 'http://www.youtube.com/watch?v='
+query = 'http://www.youtube.com'
 
-def generateIds(query_str):
-    query_string = urllib.parse.urlencode({"search_query" : query_str})
-    html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
-    ids_list = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
-    return removeDuplicated(ids_list)
+def generateUrls(query_str):
+    URLS = list()
+    links = list()
+    html_page = requests.get(query + '/results?search_query=' + query_str).text
+    soup = Soup(html_page, 'html.parser')
+    for link in soup.find_all('a'):
+        lhref = link.attrs['href'][:20]
+        if 'watch' in lhref and lhref not in links:
+            links.append(query + lhref)
+
+    return removeDuplicated(links)
 
 def removeDuplicated(ids_list):
     output = list()
@@ -32,38 +37,34 @@ def singleSongInfo(url):
 def multiSongInfo(query_str):
     output = list()
     try:
-        uid_list = generateIds(query_str)
-        urls = urlsExtractor(uid_list)
-        for key, song in urls.items():
-            print("%s [%s] > %s" %(key, song['time'], song['title']))
+        urls = generateUrls(query_str)
+        songs = urlsExtractor(urls)
+        for n, song in enumerate(songs):
+            print("%s [%s] > %s" %(n, song['time'], song['title']))
 
         cin = input('>> ')
         user_opt = parseInput(cin)
         for n in user_opt:
-            output.append(urls[int(n)])
+            output.append(songs[int(n)-1])
 
     except KeyboardInterrupt:
         pass
 
     return output 
 
-def urlsExtractor(uid_list, workers = 8):
-    def getSong(uid):
-        url = query + uid
-        title, time = getUrlData(url)
-        return {'url': url, 'title': title, 'time': time}
-
+def urlsExtractor(urls, workers = 8):
+    def getData(url):
+        audio = pafy.new(url)
+        return {'url': url, 'title': audio.title, 'time': audio.duration}
+    
+    to_ret = list()
     with fut.ThreadPoolExecutor(workers) as executor:
-        urls = {}
-        results = [executor.submit(getSong, x) for x in uid_list]
-        _id = 0
+        results = [executor.submit(getData, url) for url in urls]
         for res in fut.as_completed(results):
-            _id = _id+1
-            urls[_id] = res.result()
+            to_ret.append(res.result())
 
-        return urls
+    return to_ret
 
 def getUrlData(url):
-    print(url)
     audio = pafy.new(url)
     return audio.title, audio.duration
